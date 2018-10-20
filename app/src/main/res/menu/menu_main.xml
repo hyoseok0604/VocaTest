@@ -6,4 +6,9 @@
         android:title="채점하기"
         app:showAsAction="withText|always"/>
 
+    <item
+        android:id="@+id/analysis"
+        android:title="분석"
+        app:showAsAction="withText|always"/>
+
 </menu>

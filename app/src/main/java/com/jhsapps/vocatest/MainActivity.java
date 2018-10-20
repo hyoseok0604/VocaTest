@@ -1,15 +1,12 @@
 package com.jhsapps.vocatest;
 
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +17,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private TestBuildTool testBuildTool = null;
 
     private InputMethodManager imm = null;
+
+    private SharedPreferences prefs_testdata = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         wordDownloader.parse();
 
         imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        prefs_testdata = getSharedPreferences("test", MODE_PRIVATE);
     }
 
     public void showTest(){
@@ -233,7 +237,23 @@ public class MainActivity extends AppCompatActivity {
     private void check(){
         LinearLayout ll = findViewById(R.id.testmain);
 
+        StringBuilder data = new StringBuilder();
+
+        int[] words = testBuildTool.getWords();
+        int[] sen = testBuildTool.getSen();
+
+        data.append(words[0]);
+
+        for (int i = 1 ; i < words.length ; i++){
+            data.append(".").append(words[i]);
+        }
+
+        for (int id : sen){
+            data.append(".").append(id);
+        }
+
         for (int i = 0 ; i < 16 ; i++){
+            boolean isCorrect = true;
             ViewGroup v = (ViewGroup) ll.getChildAt(i);
             TextView kor = (TextView) v.getChildAt(0);
             ViewGroup eng = (ViewGroup) ((ViewGroup) v.getChildAt(1)).getChildAt(0);
@@ -250,8 +270,11 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     one.setTextColor(getResources().getColor(R.color.word_disablered));
                     kor.setTextColor(getResources().getColor(R.color.word_disablered));
+                    isCorrect = false;
                 }
             }
+
+            data.append(".").append(isCorrect ? "0" : "1");
         }
 
         for (int i = 16 ; i < 20 ; i++){
@@ -260,7 +283,9 @@ public class MainActivity extends AppCompatActivity {
             EditText word1 = (EditText) vg.getChildAt(1);
             EditText word2 = (EditText) vg.getChildAt(3);
 
-            int c = word1.getText().toString().equals(word1.getTag()) && word2.getText().toString().equals(word2.getTag()) ? getResources().getColor(R.color.word_disableblue) : getResources().getColor(R.color.word_disablered);
+            boolean isCorrect = word1.getText().toString().equals(word1.getTag()) && word2.getText().toString().equals(word2.getTag());
+
+            int c = isCorrect ? getResources().getColor(R.color.word_disableblue) : getResources().getColor(R.color.word_disablered);
 
             for (int j = 0 ; j < vg.getChildCount() ; j++){
                 ((TextView) vg.getChildAt(j)).setTextColor(c);
@@ -269,7 +294,11 @@ public class MainActivity extends AppCompatActivity {
             vg = (ViewGroup) ll.getChildAt(i);
             ((TextView) vg.getChildAt(0)).setTextColor(c);
             ((TextView) vg.getChildAt(2)).setTextColor(c);
+
+            data.append(".").append(isCorrect ? "0" : "1");
         }
+
+        prefs_testdata.edit().putString(new Date().getTime() + "", data.toString()).apply();
     }
 
     @Override
@@ -294,6 +323,8 @@ public class MainActivity extends AppCompatActivity {
 
             showTest();
             item.setTitle("채점하기");
+        }else if (item.getTitle().equals("분석")){
+            Toast.makeText(this, "이 기능은 다음 패치에 업데이트 됩니다.\n분석을 위한 데이터는 자동 저장 중", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
