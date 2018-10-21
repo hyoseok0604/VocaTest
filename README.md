@@ -5,7 +5,7 @@
 ###### [VocaTest/screenshot](https://github.com/jhsapps/VocaTest/tree/master/screenshot) : 예시 스크린샷이 저장되어 있는 폴더이다.
 ###### [VocaTest/app/src/main](https://github.com/jhsapps/VocaTest/tree/master/app/src/main) : 실질적인 어플리케이션 소스 코드의 최상단 폴더이다.
 ###### [VocaTest/app/src/main/java/com/jhsapps/vocatest](https://github.com/jhsapps/VocaTest/tree/master/app/src/main/java/com/jhsapps/vocatest) : 어플리케이션의 java 코드를 볼 수 있는 폴더이다.
-###### [VocaTest/screenshot](https://github.com/jhsapps/VocaTest/tree/master/app/src/main/res) : 어플리케이션에 사용되는 리소스들이 들어있는 폴더이다.
+###### [VocaTest/app/src/main/res](https://github.com/jhsapps/VocaTest/tree/master/app/src/main/res) : 어플리케이션에 사용되는 리소스들이 들어있는 폴더이다.
 
 #### java 클래스 설명
 
