@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
         String senF = index + 1 + ".\n" + (isSenFNull ? "" :  wordDownloader.getWordSenF(id) + " ");
         String senB = " " + wordDownloader.getWordSenB(id) + "\n";
-        String engWord = wordDownloader.getWordEng(id);
+        final String engWord = wordDownloader.getWordEng(id);
 
         boolean isWordLen3 = engWord.length() == 3;
 
@@ -221,6 +221,25 @@ public class MainActivity extends AppCompatActivity {
                         et4.setFocusableInTouchMode(true);
                         et4.requestFocus();
                         imm.showSoftInput(et4, 0);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            et4.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.length() == engWord.length() - 3){
+                        imm.hideSoftInputFromWindow(et4.getWindowToken(), 0);
                     }
                 }
 
