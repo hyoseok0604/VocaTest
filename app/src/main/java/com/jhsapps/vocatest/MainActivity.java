@@ -17,9 +17,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -128,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         if (s.length() == 1) {
                             int b = (a + 1 == index % 8) ? a + 2 : a + 1;
-                            imm.hideSoftInputFromWindow(eng.getChildAt(a).getWindowToken(), 0);
                             eng.getChildAt(b).setFocusableInTouchMode(true);
                             eng.getChildAt(b).requestFocus();
+                            imm.hideSoftInputFromWindow(eng.getChildAt(a).getWindowToken(), 0);
                             imm.showSoftInput(eng.getChildAt(b), 0);
                         }
                     }
@@ -217,9 +214,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (s.length() == 1){
-                        imm.hideSoftInputFromWindow(et2.getWindowToken(), 0);
                         et4.setFocusableInTouchMode(true);
                         et4.requestFocus();
+                        imm.hideSoftInputFromWindow(et2.getWindowToken(), 0);
                         imm.showSoftInput(et4, 0);
                     }
                 }
@@ -256,25 +253,15 @@ public class MainActivity extends AppCompatActivity {
     private void check(){
         LinearLayout ll = findViewById(R.id.testmain);
 
-        StringBuilder data = new StringBuilder();
-
         int[] words = testBuildTool.getWords();
         int[] sen = testBuildTool.getSen();
 
-        data.append(words[0]);
-
-        for (int i = 1 ; i < words.length ; i++){
-            data.append(".").append(words[i]);
-        }
-
-        for (int id : sen){
-            data.append(".").append(id);
-        }
-
         for (int i = 0 ; i < 16 ; i++){
-            boolean isCorrect = true;
             ViewGroup v = (ViewGroup) ll.getChildAt(i);
             TextView kor = (TextView) v.getChildAt(0);
+
+            kor.append("\n정답 : " + wordDownloader.getWordEng(words[i]));
+
             ViewGroup eng = (ViewGroup) ((ViewGroup) v.getChildAt(1)).getChildAt(0);
 
             kor.setTextColor(getResources().getColor(R.color.word_disableblue));
@@ -289,15 +276,16 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     one.setTextColor(getResources().getColor(R.color.word_disablered));
                     kor.setTextColor(getResources().getColor(R.color.word_disablered));
-                    isCorrect = false;
                 }
             }
-
-            data.append(".").append(isCorrect ? "0" : "1");
         }
 
         for (int i = 16 ; i < 20 ; i++){
             ViewGroup vg = ((ViewGroup) ((ViewGroup) ll.getChildAt(i)).getChildAt(1));
+
+            TextView sentv = (TextView) ((ViewGroup) ll.getChildAt(i)).getChildAt(0);
+
+            sentv.setText(sentv.getText().toString().replaceAll((i + 1) + ".", (i + 1) + ". 정답 : " + wordDownloader.getWordEng(sen[i-16])));
 
             EditText word1 = (EditText) vg.getChildAt(1);
             EditText word2 = (EditText) vg.getChildAt(3);
@@ -313,11 +301,7 @@ public class MainActivity extends AppCompatActivity {
             vg = (ViewGroup) ll.getChildAt(i);
             ((TextView) vg.getChildAt(0)).setTextColor(c);
             ((TextView) vg.getChildAt(2)).setTextColor(c);
-
-            data.append(".").append(isCorrect ? "0" : "1");
         }
-
-        prefs_testdata.edit().putString(new Date().getTime() + "", data.toString()).apply();
     }
 
     @Override
@@ -342,8 +326,6 @@ public class MainActivity extends AppCompatActivity {
 
             showTest();
             item.setTitle("채점하기");
-        }else if (item.getTitle().equals("분석")){
-            Toast.makeText(this, "이 기능은 다음 패치에 업데이트 됩니다.\n분석을 위한 데이터는 자동 저장 중", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
