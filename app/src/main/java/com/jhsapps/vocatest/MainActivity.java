@@ -1,6 +1,6 @@
 package com.jhsapps.vocatest;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,24 +18,56 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * 변수 선언
+     */
+
     private WordDownloader wordDownloader = null;
-
     private TestBuildTool testBuildTool = null;
-
     private InputMethodManager imm = null;
-
-    private SharedPreferences prefs_testdata = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /**
+         * 객체 선언
+         * @see WordDownloader#WordDownloader(Context, WordDownloader.WordDownloaderListener)
+         */
+
         wordDownloader = new WordDownloader(this, new WordDownloader.WordDownloaderListener() {
+
+            /**
+             * 커스텀 Listener 객체
+             * 단어 다운로드가 끝나면 실행할 내용들을 적는다
+             * @see WordDownloader.WordDownloaderListener#onWordDownloadEnd()
+             */
             @Override
             public void onWordDownloadEnd() {
+                /**
+                 * testBuildTool 객체 선언
+                 *
+                 * testBuildTool = new TestBuildTool(wordDownloader);
+                 * wordDownloader을 testBuildTool의 생성인자로 넘겨준다
+                 * @see TestBuildTool#TestBuildTool(WordDownloader)
+                 *
+                 * testBuildTool.build();
+                 * testBuildTool의 build함수를 실행한다
+                 * @see TestBuildTool#build()
+                 *
+                 * testBuildTool.checkWordLength();
+                 * testBuildTool의 checkWordLength함수를 실행한다
+                 * @see TestBuildTool#checkWordLength()
+                 *
+                 * showTest();
+                 * showTest함수를 실행한다
+                 * @see MainActivity#showTest()
+                 */
 
                 testBuildTool = new TestBuildTool(wordDownloader);
                 testBuildTool.build();
@@ -45,18 +77,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * wordDownloader.parse();
+         * wordDownloader의 parse함수를 실행한다
+         * @see WordDownloader#parse()
+         *
+         * imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+         * imm객체를 생성한다
+         */
+
         wordDownloader.parse();
 
         imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-
-        prefs_testdata = getSharedPreferences("test", MODE_PRIVATE);
     }
 
+    /**
+     * 단어 시험을 보여주는 함수
+     */
+
     public void showTest(){
+        /**
+         * activity_main.xml에서 id가 R.id.testmain인 LinearLayout을 가져온다
+         */
+
         LinearLayout ll = findViewById(R.id.testmain);
+
+        /**
+         * words, sen 배열에 각각 getWords, getSen을 저장한다
+         *
+         * int 배열에는 각 단어에 지정되어있는 고유 아이디가 들어가있다
+         */
 
         int[] words = testBuildTool.getWords();
         int[] sen = testBuildTool.getSen();
+
+        /**
+         * foreach문을 이용해서 단어와 문장을 화면에 띄워준다
+         */
 
         int i = 0;
         for(int id : words){
@@ -68,19 +125,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 단어를 화면에 띄워주는 함수
+     * @param ll 단어를 띄울 대상 레이아웃
+     * @param id 단어의 고유 아이디 1~250
+     * @param index 단어시험의 번호 1, 2, 3, 4, 5 ...
+     */
+
     public void makeWord(LinearLayout ll, int id, final int index){
+        // 레이아웃 인플레이터 생성
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        // layout폴더에 row_word파일의 전체 내용을 v에 넣어준다
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.row_word, null);
+
+        // row_word파일의 0번째 자식 뷰를 가져온다
         TextView kor = (TextView) v.getChildAt(0);
+        // eng 그룹에는 1번째 자식의 0번째 자식을 가져오게 된다.
         final ViewGroup eng = (ViewGroup) ((ViewGroup) v.getChildAt(1)).getChildAt(0);
 
+        // 단어에 정해져있는 고유 id를 이용해서 영어 단어를 가져온다
         String engWord = wordDownloader.getWordEng(id);
+        // 단어에 정해져있는 고유 id를 이용해서 뜻을 가져온다
         String korWord = index + 1 + ". " + wordDownloader.getWordKor(id);
 
+        // 태그를 달아주는데 이 태그는 나중에 단어를 채점할때에 사용을 하기 위해서 단어의 길이를 저장한다
         eng.setTag(engWord.length());
 
+        // 불러온 한글을 kor의 텍스트로 설정한다
         kor.setText(korWord);
 
+        // eng의 뷰의 자식의 개수만큼 반복한다
         for(int i = 0 ; i < eng.getChildCount() ; i++){
             final int a = i;
             final TextView one = (TextView) eng.getChildAt(i);

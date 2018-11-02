@@ -2,12 +2,10 @@ package com.jhsapps.vocatest;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,23 +16,21 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class WordDownloader {
+class WordDownloader {
 
-    private Context context = null;
+    private Context context;
 
-    //private final String[] fields = new String[]{"id", "eng", "kor", "sen_f", "sen_b", "unit"};
+    private WordDB wordDB;
 
-    private WordDB wordDB = null;
+    private WordDownloaderListener wordDownloaderListener;
 
-    private WordDownloaderListener wordDownloaderListener = null;
-
-    public WordDownloader(Context context, WordDownloaderListener wordDownloaderListener){
+    WordDownloader(Context context, WordDownloaderListener wordDownloaderListener){
         this.context = context;
         wordDB = new WordDB(context);
         this.wordDownloaderListener = wordDownloaderListener;
     }
 
-    public void parse(){
+    void parse(){
         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("isDownloadWord", false)){
             wordDownloaderListener.onWordDownloadEnd();
             return;
@@ -125,19 +121,19 @@ public class WordDownloader {
         return result.toString();
     }
 
-    public String getWordEng(int id){
+    String getWordEng(int id){
         return wordDB.getWordEng(id);
     }
 
-    public String getWordKor(int id){
+    String getWordKor(int id){
         return wordDB.getWordKor(id);
     }
 
-    public String getWordSenF(int id){
+    String getWordSenF(int id){
         return wordDB.getWordSenF(id);
     }
 
-    public String getWordSenB(int id){
+    String getWordSenB(int id){
         return wordDB.getWordSenB(id);
     }
 
@@ -163,7 +159,7 @@ public class WordDownloader {
         }
 
 
-        public String getWordEng(int id){
+        String getWordEng(int id){
             SQLiteDatabase db = getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT `eng` FROM `words_15_to_20` WHERE id=" + id, null);
             cursor.moveToNext();
@@ -172,7 +168,7 @@ public class WordDownloader {
             return s;
         }
 
-        public String getWordSenF(int id){
+        String getWordSenF(int id){
             SQLiteDatabase db = getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT `sen_f` FROM `words_15_to_20` WHERE id=" + id, null);
             cursor.moveToNext();
@@ -181,7 +177,7 @@ public class WordDownloader {
             return s;
         }
 
-        public String getWordSenB(int id){
+        String getWordSenB(int id){
             SQLiteDatabase db = getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT `sen_b` FROM `words_15_to_20` WHERE id=" + id, null);
             cursor.moveToNext();
@@ -190,7 +186,7 @@ public class WordDownloader {
             return s;
         }
 
-        public String getWordKor(int id){
+        String getWordKor(int id){
             SQLiteDatabase db = getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT `kor` FROM `words_15_to_20` WHERE id=" + id, null);
             cursor.moveToNext();

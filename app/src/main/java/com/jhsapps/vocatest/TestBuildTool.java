@@ -1,40 +1,32 @@
 package com.jhsapps.vocatest;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
-public class TestBuildTool {
+class TestBuildTool {
 
     // word : 3 3 3 3 4
 
-    private int wordPlus = -1;
-
-    private int[][] word = null;
     private int[] words = null;
 
     // sen : 0 1 1 1 1
 
-    private int senIgnore = -1;
-
     private int[] sen = null;
 
-    private WordDownloader wordDownloader = null;
+    private WordDownloader wordDownloader;
 
-    public TestBuildTool(WordDownloader wordDownloader){
+    TestBuildTool(WordDownloader wordDownloader){
         this.wordDownloader = wordDownloader;
     }
 
-    public void build(){
-        word = new int[5][4];
+    void build(){
+        int[][] word = new int[5][4];
         sen = new int[4];
 
-        wordPlus = random(0, 4);
-        senIgnore = random(0, 4);
+        int wordPlus = random(0, 4);
+        int senIgnore = random(0, 4);
 
         int cursorSen = 0;
 
@@ -52,7 +44,7 @@ public class TestBuildTool {
         sen = shuffle(sen);
     }
 
-    public void checkWordLength(){
+    void checkWordLength(){
         for(int i = 0 ; i < words.length ; i++){
             int requireLength = i % 8 + 1;
             int wordLength = wordDownloader.getWordEng(words[i]).length();
@@ -75,9 +67,7 @@ public class TestBuildTool {
     }
 
     private int random(int s, int e){
-        int n = (int) (Math.random() * ( e - s + 1 ) ) + s;
-
-        return n;
+        return (int) (Math.random() * ( e - s + 1 ) ) + s;
     }
 
     private int random(int s, int e, int[] overlap){
@@ -123,24 +113,11 @@ public class TestBuildTool {
         return array;
     }
 
-    public String toString(){
-        StringBuilder s = new StringBuilder();
-
-        s.append("word[");
-        for(int i = 0 ; i < words.length - 1; i++)  s.append(wordDownloader.getWordEng(words[i])).append(", ");
-        s.append(wordDownloader.getWordEng(words[words.length - 1])).append("]\n");
-        s.append("sen[");
-        for(int i = 0 ; i < sen.length - 1; i++)  s.append(wordDownloader.getWordEng(sen[i])).append(", ");
-        s.append(wordDownloader.getWordEng(sen[sen.length - 1])).append("]");
-
-        return s.toString();
-    }
-
-    public int[] getWords(){
+    int[] getWords(){
         return words;
     }
 
-    public int[] getSen(){
+    int[] getSen(){
         return sen;
     }
 }
