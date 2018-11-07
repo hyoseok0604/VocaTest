@@ -1,6 +1,5 @@
 package com.jhsapps.vocatest;
 
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,8 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
     private InputMethodManager imm = null;
 
-    private SharedPreferences prefs_testdata = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,21 +32,24 @@ public class MainActivity extends AppCompatActivity {
 
         wordDownloader = new WordDownloader(this, new WordDownloader.WordDownloaderListener() {
             @Override
-            public void onWordDownloadEnd() {
+            public void onWordDownloadEnd(boolean success) {
 
-                testBuildTool = new TestBuildTool(wordDownloader);
-                testBuildTool.build();
-                testBuildTool.checkWordLength();
+                if (!success) {
+                    finish();
+                }else {
 
-                showTest();
+                    testBuildTool = new TestBuildTool(wordDownloader);
+                    testBuildTool.build();
+                    testBuildTool.checkWordLength();
+
+                    showTest();
+                }
             }
         });
 
         wordDownloader.parse();
 
         imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-
-        prefs_testdata = getSharedPreferences("test", MODE_PRIVATE);
     }
 
     public void showTest(){
