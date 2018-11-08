@@ -152,6 +152,5 @@
                 android:textSize="20sp" />
 
         </LinearLayout>
-
     </HorizontalScrollView>
 </LinearLayout>

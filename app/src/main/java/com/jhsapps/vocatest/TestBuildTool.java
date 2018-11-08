@@ -12,14 +12,9 @@ public class TestBuildTool {
 
     // word : 3 3 3 3 4
 
-    private int wordPlus = -1;
-
-    private int[][] word = null;
     private int[] words = null;
 
     // sen : 0 1 1 1 1
-
-    private int senIgnore = -1;
 
     private int[] sen = null;
 
@@ -30,11 +25,11 @@ public class TestBuildTool {
     }
 
     public void build(){
-        word = new int[5][4];
+        int[][] word = new int[5][4];
         sen = new int[4];
 
-        wordPlus = random(0, 4);
-        senIgnore = random(0, 4);
+        int wordPlus = random(0, 4);
+        int senIgnore = random(0, 4);
 
         int cursorSen = 0;
 
@@ -136,11 +131,11 @@ public class TestBuildTool {
         return s.toString();
     }
 
-    public int[] getWords(){
+    int[] getWords(){
         return words;
     }
 
-    public int[] getSen(){
+    int[] getSen(){
         return sen;
     }
 }
